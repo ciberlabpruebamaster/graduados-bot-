@@ -15,14 +15,19 @@ app = Flask(__name__)
 VERIFY_TOKEN = os.environ.get("VERIFY_TOKEN", "")
 WHATSAPP_TOKEN = os.environ.get("WHATSAPP_TOKEN", "")
 PHONE_NUMBER_ID = os.environ.get("PHONE_NUMBER_ID", "")
+PHONE_NUMBER_ID_2 = os.environ.get("PHONE_NUMBER_ID_2", "")
 APP_SECRET = os.environ.get("APP_SECRET", "")
 ASESOR_PHONE = os.environ.get("ASESOR_PHONE", "")
+ASESOR_PHONE_2 = os.environ.get("ASESOR_PHONE_2", "")
 BUSINESS_NAME = os.environ.get("BUSINESS_NAME", "Asesoría Laboral")
+BASE_URL = os.environ.get("BASE_URL", "")
 
 TIMEOUT_MINUTES = 10
 
-# Estado por usuario: step, service_key, q_index, answers, last_activity, timeout_sent
 user_state: dict[str, dict] = {}
+user_state_2: dict[str, dict] = {}
+
+# ── BOT 1: FLUJOS LABORALES ───────────────────────────────────────────
 
 FLOWS = {
     "1": {
@@ -104,6 +109,126 @@ WELCOME_MESSAGE = (
     "7️⃣ Solicitar una llamada"
 )
 
+# ── BOT 2: SERVICIOS JURÍDICOS ────────────────────────────────────────
+
+FLOWS2 = {
+    "1": {
+        "name": "Asesoramiento Fiscal",
+        "image": "fiscal.png",
+        "options": (
+            "A) Planificación Societaria\n"
+            "B) IRPF y Renta\n"
+            "C) Patrimonio y Sucesiones\n"
+            "D) Impuesto de Sociedades\n"
+            "E) Subvenciones y Licencias"
+        ),
+    },
+    "2": {
+        "name": "Asesoramiento Laboral",
+        "image": "laboral_ases.png",
+        "options": (
+            "A) Nóminas y Contratos\n"
+            "B) Seguridad Social\n"
+            "C) Prestaciones y Subsidios\n"
+            "D) Inspección de Trabajo\n"
+            "E) Asesoría General"
+        ),
+    },
+    "3": {
+        "name": "Derecho de Circulación",
+        "image": "circulacion.png",
+        "options": (
+            "A) Accidentes de Tráfico\n"
+            "B) Reclamaciones\n"
+            "C) Delitos de Tráfico\n"
+            "D) Transporte\n"
+            "E) Peritaciones"
+        ),
+    },
+    "4": {
+        "name": "Derecho Civil",
+        "image": "civil.png",
+        "options": (
+            "A) Procesos Civiles\n"
+            "B) Arrendamientos\n"
+            "C) Derecho de Familia\n"
+            "D) Derecho Sucesorio\n"
+            "E) Propiedad Intelectual"
+        ),
+    },
+    "5": {
+        "name": "Derecho Deportivo",
+        "image": "deportivo.png",
+        "options": (
+            "A) Laboral Deportivo\n"
+            "B) Fiscal Deportivo\n"
+            "C) Asesoramiento a Clubes\n"
+            "D) Litigios Deportivos\n"
+            "E) Federaciones y Asociaciones"
+        ),
+    },
+    "6": {
+        "name": "Derecho de Extranjería",
+        "image": "extranjeria.png",
+        "options": (
+            "A) Residencia y NIE\n"
+            "B) Arraigo\n"
+            "C) Visados\n"
+            "D) Nacionalidad\n"
+            "E) Recursos"
+        ),
+    },
+    "7": {
+        "name": "Derecho Laboral",
+        "image": "laboral.png",
+        "options": (
+            "A) Contratación y Despidos\n"
+            "B) Jurisdicción Social\n"
+            "C) Prestaciones Sociales\n"
+            "D) EREs y Reestructuración\n"
+            "E) Permisos y Excedencias"
+        ),
+    },
+    "8": {
+        "name": "Derecho Mercantil",
+        "image": "mercantil.png",
+        "options": (
+            "A) Sociedades\n"
+            "B) Fusiones y Adquisiciones\n"
+            "C) Derecho de Seguros\n"
+            "D) Situaciones de Crisis\n"
+            "E) Contratos Mercantiles"
+        ),
+    },
+    "9": {
+        "name": "Derecho Urbanismo",
+        "image": "urbanismo.png",
+        "options": (
+            "A) Planeamiento Urbanístico\n"
+            "B) Expropiaciones\n"
+            "C) Expedientes\n"
+            "D) Licencias\n"
+            "E) Disciplina Urbanística"
+        ),
+    },
+}
+
+WELCOME_MESSAGE_2 = (
+    f"👋 ¡Hola! Soy el asistente jurídico de *{BUSINESS_NAME}*.\n\n"
+    "¿En qué área podemos ayudarte?\n\n"
+    "1️⃣ Asesoramiento Fiscal\n"
+    "2️⃣ Asesoramiento Laboral\n"
+    "3️⃣ Derecho de Circulación\n"
+    "4️⃣ Derecho Civil\n"
+    "5️⃣ Derecho Deportivo\n"
+    "6️⃣ Derecho de Extranjería\n"
+    "7️⃣ Derecho Laboral\n"
+    "8️⃣ Derecho Mercantil\n"
+    "9️⃣ Derecho Urbanismo"
+)
+
+# ── MENSAJES COMUNES ──────────────────────────────────────────────────
+
 OUT_OF_HOURS_MESSAGE = (
     "⏰ En este momento estamos fuera de horario. "
     "Atendemos de *lunes a viernes de 9:00 a 18:00h*.\n\n"
@@ -128,6 +253,22 @@ INVALID_OPTION = (
     "O escribe *MENU* en cualquier momento para volver aquí."
 )
 
+INVALID_OPTION_2 = (
+    "No reconozco esa opción. Por favor elige un número del 1 al 9:\n\n"
+    "1️⃣ Asesoramiento Fiscal\n"
+    "2️⃣ Asesoramiento Laboral\n"
+    "3️⃣ Derecho de Circulación\n"
+    "4️⃣ Derecho Civil\n"
+    "5️⃣ Derecho Deportivo\n"
+    "6️⃣ Derecho de Extranjería\n"
+    "7️⃣ Derecho Laboral\n"
+    "8️⃣ Derecho Mercantil\n"
+    "9️⃣ Derecho Urbanismo\n\n"
+    "O escribe *MENU* para volver aquí."
+)
+
+
+# ── UTILIDADES ────────────────────────────────────────────────────────
 
 def is_business_hours() -> bool:
     now = datetime.now()
@@ -136,8 +277,9 @@ def is_business_hours() -> bool:
     return 9 <= now.hour < 18
 
 
-def send_whatsapp_message(to: str, text: str) -> None:
-    url = f"https://graph.facebook.com/v20.0/{PHONE_NUMBER_ID}/messages"
+def send_whatsapp_message(to: str, text: str, phone_number_id: str = None) -> None:
+    pid = phone_number_id or PHONE_NUMBER_ID
+    url = f"https://graph.facebook.com/v20.0/{pid}/messages"
     headers = {
         "Authorization": f"Bearer {WHATSAPP_TOKEN}",
         "Content-Type": "application/json",
@@ -152,7 +294,28 @@ def send_whatsapp_message(to: str, text: str) -> None:
         response = requests.post(url, headers=headers, json=payload, timeout=10)
         response.raise_for_status()
     except Exception as e:
-        print(f"Error sending to {to}: {e}")
+        print(f"Error sending message to {to}: {e}")
+
+
+def send_whatsapp_image(to: str, image_filename: str, caption: str = "", phone_number_id: str = None) -> None:
+    pid = phone_number_id or PHONE_NUMBER_ID_2
+    url = f"https://graph.facebook.com/v20.0/{pid}/messages"
+    image_url = f"{BASE_URL}/static/servicios/{image_filename}"
+    headers = {
+        "Authorization": f"Bearer {WHATSAPP_TOKEN}",
+        "Content-Type": "application/json",
+    }
+    payload = {
+        "messaging_product": "whatsapp",
+        "to": to,
+        "type": "image",
+        "image": {"link": image_url, "caption": caption},
+    }
+    try:
+        response = requests.post(url, headers=headers, json=payload, timeout=10)
+        response.raise_for_status()
+    except Exception as e:
+        print(f"Error sending image to {to}: {e}")
 
 
 def notify_asesor(service_name: str, answers: list, contact_info: str, user_phone: str) -> None:
@@ -175,6 +338,20 @@ def notify_asesor_simple(reason: str, info: str, user_phone: str) -> None:
     send_whatsapp_message(ASESOR_PHONE, msg)
 
 
+def notify_asesor_2(area: str, subopcion: str, contact_info: str, user_phone: str) -> None:
+    asesor = ASESOR_PHONE_2 or ASESOR_PHONE
+    msg = (
+        f"🔔 *NUEVA CONSULTA JURÍDICA*\n\n"
+        f"📱 WhatsApp cliente: +{user_phone}\n"
+        f"📂 Área: {area}\n"
+        f"📌 Subopción: {subopcion}\n"
+        f"👤 Datos de contacto: {contact_info}"
+    )
+    send_whatsapp_message(asesor, msg)
+
+
+# ── ESTADO ────────────────────────────────────────────────────────────
+
 def init_state(user_id: str) -> dict:
     state: dict = {
         "step": "menu",
@@ -194,6 +371,24 @@ def get_state(user_id: str) -> dict:
     return user_state[user_id]
 
 
+def init_state_2(user_id: str) -> dict:
+    state: dict = {
+        "step": "menu2",
+        "area_key": None,
+        "subopcion": None,
+        "last_activity": datetime.now(),
+        "timeout_sent": False,
+    }
+    user_state_2[user_id] = state
+    return state
+
+
+def get_state_2(user_id: str) -> dict:
+    if user_id not in user_state_2:
+        return init_state_2(user_id)
+    return user_state_2[user_id]
+
+
 def is_menu_keyword(text: str) -> bool:
     return text.strip().lower() in {
         "menu", "menú", "inicio", "start",
@@ -202,13 +397,14 @@ def is_menu_keyword(text: str) -> bool:
     }
 
 
+# ── LÓGICA BOT 1 ──────────────────────────────────────────────────────
+
 def handle_message(user_id: str, text: str) -> None:
     text_clean = text.strip()
     state = get_state(user_id)
     state["last_activity"] = datetime.now()
     state["timeout_sent"] = False
 
-    # Palabra clave de menú — siempre reinicia
     if is_menu_keyword(text_clean):
         init_state(user_id)
         send_whatsapp_message(user_id, WELCOME_MESSAGE)
@@ -216,7 +412,6 @@ def handle_message(user_id: str, text: str) -> None:
 
     step = state["step"]
 
-    # ── SELECCIÓN DE MENÚ ─────────────────────────────────────────────
     if step == "menu":
         if text_clean in ("1", "2", "3", "4", "5"):
             flow = FLOWS[text_clean]
@@ -249,7 +444,6 @@ def handle_message(user_id: str, text: str) -> None:
         else:
             send_whatsapp_message(user_id, INVALID_OPTION)
 
-    # ── PREGUNTAS DEL FLUJO (opciones 1-5) ───────────────────────────
     elif step == "flow_q":
         flow = FLOWS[state["service_key"]]
         state["answers"].append(text_clean)
@@ -262,7 +456,6 @@ def handle_message(user_id: str, text: str) -> None:
             state["step"] = "flow_contact"
             send_whatsapp_message(user_id, flow["closing"])
 
-    # ── CAPTURA DE CONTACTO (opciones 1-5) ───────────────────────────
     elif step == "flow_contact":
         flow = FLOWS[state["service_key"]]
         notify_asesor(flow["name"], state["answers"], text_clean, user_id)
@@ -273,7 +466,6 @@ def handle_message(user_id: str, text: str) -> None:
         )
         init_state(user_id)
 
-    # ── HABLAR CON EL ASESOR (opción 6) ──────────────────────────────
     elif step == "s6_query":
         notify_asesor_simple("QUIERE HABLAR CON EL ASESOR", text_clean, user_id)
         send_whatsapp_message(
@@ -283,7 +475,6 @@ def handle_message(user_id: str, text: str) -> None:
         )
         init_state(user_id)
 
-    # ── SOLICITAR LLAMADA (opción 7) ─────────────────────────────────
     elif step == "s7_time":
         state["answers"] = [f"Horario preferido: {text_clean}"]
         state["step"] = "s7_contact"
@@ -307,7 +498,65 @@ def handle_message(user_id: str, text: str) -> None:
         init_state(user_id)
 
 
-# ── HILO DE TIMEOUT ───────────────────────────────────────────────────
+# ── LÓGICA BOT 2 ──────────────────────────────────────────────────────
+
+def handle_message_2(user_id: str, text: str) -> None:
+    text_clean = text.strip().upper()
+    state = get_state_2(user_id)
+    state["last_activity"] = datetime.now()
+    state["timeout_sent"] = False
+
+    if is_menu_keyword(text_clean.lower()):
+        init_state_2(user_id)
+        send_whatsapp_message(user_id, WELCOME_MESSAGE_2, PHONE_NUMBER_ID_2)
+        return
+
+    step = state["step"]
+
+    if step == "menu2":
+        key = text_clean
+        if key in FLOWS2:
+            flow = FLOWS2[key]
+            state["step"] = "flow2_sub"
+            state["area_key"] = key
+            send_whatsapp_image(user_id, flow["image"], phone_number_id=PHONE_NUMBER_ID_2)
+            send_whatsapp_message(
+                user_id,
+                f"Estas son las áreas de *{flow['name']}* en las que podemos ayudarte:\n\n"
+                f"{flow['options']}\n\n"
+                "¿Cuál es tu caso?",
+                PHONE_NUMBER_ID_2,
+            )
+        else:
+            send_whatsapp_message(user_id, INVALID_OPTION_2, PHONE_NUMBER_ID_2)
+
+    elif step == "flow2_sub":
+        flow = FLOWS2[state["area_key"]]
+        state["subopcion"] = f"{text_clean} — {flow['name']}"
+        state["step"] = "flow2_contact"
+        send_whatsapp_message(
+            user_id,
+            "✅ Entendido.\n\n"
+            "Para que nuestro asesor se ponga en contacto contigo, "
+            "dinos tu *nombre completo* y un *teléfono o email*.",
+            PHONE_NUMBER_ID_2,
+        )
+
+    elif step == "flow2_contact":
+        flow = FLOWS2[state["area_key"]]
+        notify_asesor_2(flow["name"], state["subopcion"], text_clean, user_id)
+        send_whatsapp_message(
+            user_id,
+            "✅ ¡Perfecto! Hemos recibido tu consulta.\n\n"
+            "Nuestro asesor se pondrá en contacto contigo en menos de 24 horas. 😊\n\n"
+            "Si necesitas algo más escribe *MENU*.",
+            PHONE_NUMBER_ID_2,
+        )
+        init_state_2(user_id)
+
+
+# ── TIMEOUT ───────────────────────────────────────────────────────────
+
 def timeout_checker() -> None:
     while True:
         time.sleep(60)
@@ -319,12 +568,20 @@ def timeout_checker() -> None:
             if elapsed >= TIMEOUT_MINUTES:
                 send_whatsapp_message(user_id, TIMEOUT_REMINDER)
                 state["timeout_sent"] = True
+        for user_id, state in list(user_state_2.items()):
+            if state["step"] == "menu2" or state.get("timeout_sent"):
+                continue
+            elapsed = (now - state["last_activity"]).total_seconds() / 60
+            if elapsed >= TIMEOUT_MINUTES:
+                send_whatsapp_message(user_id, TIMEOUT_REMINDER, PHONE_NUMBER_ID_2)
+                state["timeout_sent"] = True
 
 
 threading.Thread(target=timeout_checker, daemon=True).start()
 
 
 # ── WEBHOOK ───────────────────────────────────────────────────────────
+
 def verify_signature(payload: bytes, signature: str) -> bool:
     if not APP_SECRET:
         return True
@@ -362,33 +619,42 @@ def receive_message():
         message = value["messages"][0]
         from_number = message["from"]
         message_type = message.get("type")
+        incoming_phone_id = value.get("metadata", {}).get("phone_number_id", "")
 
         if message_type != "text":
+            pid = PHONE_NUMBER_ID_2 if incoming_phone_id == PHONE_NUMBER_ID_2 else PHONE_NUMBER_ID
             send_whatsapp_message(
                 from_number,
                 "Solo proceso texto por ahora 😊 Escribe *MENU* para ver las opciones.",
+                pid,
             )
             return jsonify({"status": "ok"}), 200
 
         user_text = message["text"]["body"]
 
-        # Usuario nuevo → bienvenida
-        if from_number not in user_state:
-            init_state(from_number)
-            send_whatsapp_message(from_number, WELCOME_MESSAGE)
-            return jsonify({"status": "ok"}), 200
+        # Enrutar según número receptor
+        if incoming_phone_id == PHONE_NUMBER_ID_2:
+            if from_number not in user_state_2:
+                init_state_2(from_number)
+                send_whatsapp_message(from_number, WELCOME_MESSAGE_2, PHONE_NUMBER_ID_2)
+                return jsonify({"status": "ok"}), 200
+            handle_message_2(from_number, user_text)
+        else:
+            if from_number not in user_state:
+                init_state(from_number)
+                send_whatsapp_message(from_number, WELCOME_MESSAGE)
+                return jsonify({"status": "ok"}), 200
 
-        # Fuera de horario → solo bloquea en el menú, no a mitad de un flujo
-        state = user_state[from_number]
-        if (
-            state["step"] == "menu"
-            and not is_menu_keyword(user_text)
-            and not is_business_hours()
-        ):
-            send_whatsapp_message(from_number, OUT_OF_HOURS_MESSAGE)
-            return jsonify({"status": "ok"}), 200
+            state = user_state[from_number]
+            if (
+                state["step"] == "menu"
+                and not is_menu_keyword(user_text)
+                and not is_business_hours()
+            ):
+                send_whatsapp_message(from_number, OUT_OF_HOURS_MESSAGE)
+                return jsonify({"status": "ok"}), 200
 
-        handle_message(from_number, user_text)
+            handle_message(from_number, user_text)
 
     except (KeyError, IndexError) as e:
         print(f"Webhook parse error: {e}")
