@@ -12,9 +12,9 @@ load_dotenv()
 
 app = Flask(__name__)
 
-VERIFY_TOKEN = os.environ["VERIFY_TOKEN"]
-WHATSAPP_TOKEN = os.environ["WHATSAPP_TOKEN"]
-PHONE_NUMBER_ID = os.environ["PHONE_NUMBER_ID"]
+VERIFY_TOKEN = os.environ.get("VERIFY_TOKEN", "")
+WHATSAPP_TOKEN = os.environ.get("WHATSAPP_TOKEN", "")
+PHONE_NUMBER_ID = os.environ.get("PHONE_NUMBER_ID", "")
 APP_SECRET = os.environ.get("APP_SECRET", "")
 ASESOR_PHONE = os.environ.get("ASESOR_PHONE", "")
 BUSINESS_NAME = os.environ.get("BUSINESS_NAME", "Asesoría Laboral")
