@@ -335,9 +335,9 @@ def send_email(subject: str, body: str) -> None:
         msg["From"] = GMAIL_USER
         msg["To"] = ASESOR_EMAIL
         msg.attach(MIMEText(body, "plain", "utf-8"))
-        with smtplib.SMTP("smtp.gmail.com", 587) as server:     
-            server.ehlo()     
-            server.starttls()    
+        with smtplib.SMTP("smtp.gmail.com", 587) as server:
+            server.ehlo()
+            server.starttls()
             server.ehlo()
             server.login(GMAIL_USER, GMAIL_APP_PASSWORD)
             server.sendmail(GMAIL_USER, ASESOR_EMAIL, msg.as_string())
