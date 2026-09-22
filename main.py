@@ -3,10 +3,7 @@ import hmac
 import hashlib
 import time
 import threading
-import smtplib
 import requests
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
 from flask import Flask, request, jsonify
 from dotenv import load_dotenv
 from datetime import datetime
@@ -23,9 +20,9 @@ APP_SECRET = os.environ.get("APP_SECRET", "")
 BUSINESS_NAME = os.environ.get("BUSINESS_NAME", "Asesoría Laboral")
 BASE_URL = os.environ.get("BASE_URL", "")
 
-# Configuración email
-GMAIL_USER = os.environ.get("GMAIL_USER", "javier.martin.ruiz.gs@gmail.com")
-GMAIL_APP_PASSWORD = os.environ.get("GMAIL_APP_PASSWORD", "")
+# Configuración email (Resend)
+RESEND_API_KEY = os.environ.get("RESEND_API_KEY", "")
+EMAIL_FROM = os.environ.get("EMAIL_FROM", "onboarding@resend.dev")
 ASESOR_EMAIL = os.environ.get("ASESOR_EMAIL", "rrss.nebulosadigital@gmail.com")
 
 TIMEOUT_MINUTES = 10
@@ -325,23 +322,29 @@ def send_whatsapp_image(to: str, image_filename: str, caption: str = "", phone_n
 
 
 def _send_email_thread(subject: str, body: str) -> None:
-    """Envía un email en hilo separado para no bloquear el webhook."""
-    if not GMAIL_APP_PASSWORD:
-        print("GMAIL_APP_PASSWORD no configurada — email no enviado")
+    """Envía un email vía Resend API (HTTPS) en hilo separado."""
+    if not RESEND_API_KEY:
+        print("RESEND_API_KEY no configurada — email no enviado")
         return
     try:
-        msg = MIMEMultipart("alternative")
-        msg["Subject"] = subject
-        msg["From"] = GMAIL_USER
-        msg["To"] = ASESOR_EMAIL
-        msg.attach(MIMEText(body, "plain", "utf-8"))
-        with smtplib.SMTP("smtp.gmail.com", 587, timeout=20) as server:
-            server.ehlo()
-            server.starttls()
-            server.ehlo()
-            server.login(GMAIL_USER, GMAIL_APP_PASSWORD)
-            server.sendmail(GMAIL_USER, ASESOR_EMAIL, msg.as_string())
-        print(f"Email enviado a {ASESOR_EMAIL}: {subject}")
+        response = requests.post(
+            "https://api.resend.com/emails",
+            headers={
+                "Authorization": f"Bearer {RESEND_API_KEY}",
+                "Content-Type": "application/json",
+            },
+            json={
+                "from": EMAIL_FROM,
+                "to": [ASESOR_EMAIL],
+                "subject": subject,
+                "text": body,
+            },
+            timeout=15,
+        )
+        if response.status_code == 200 or response.status_code == 201:
+            print(f"Email enviado a {ASESOR_EMAIL}: {subject}")
+        else:
+            print(f"Error Resend {response.status_code}: {response.text}")
     except Exception as e:
         print(f"Error enviando email: {e}")
 
