@@ -324,8 +324,8 @@ def send_whatsapp_image(to: str, image_filename: str, caption: str = "", phone_n
         print(f"Error sending image to {to}: {e}")
 
 
-def send_email(subject: str, body: str) -> None:
-    """Envía un email desde GMAIL_USER a ASESOR_EMAIL."""
+def _send_email_thread(subject: str, body: str) -> None:
+    """Envía un email en hilo separado para no bloquear el webhook."""
     if not GMAIL_APP_PASSWORD:
         print("GMAIL_APP_PASSWORD no configurada — email no enviado")
         return
@@ -335,7 +335,7 @@ def send_email(subject: str, body: str) -> None:
         msg["From"] = GMAIL_USER
         msg["To"] = ASESOR_EMAIL
         msg.attach(MIMEText(body, "plain", "utf-8"))
-        with smtplib.SMTP("smtp.gmail.com", 587) as server:
+        with smtplib.SMTP("smtp.gmail.com", 587, timeout=20) as server:
             server.ehlo()
             server.starttls()
             server.ehlo()
@@ -344,6 +344,10 @@ def send_email(subject: str, body: str) -> None:
         print(f"Email enviado a {ASESOR_EMAIL}: {subject}")
     except Exception as e:
         print(f"Error enviando email: {e}")
+
+
+def send_email(subject: str, body: str) -> None:
+    threading.Thread(target=_send_email_thread, args=(subject, body), daemon=True).start()
 
 
 def notify_asesor(service_name: str, answers: list, contact_info: str, user_phone: str) -> None:
