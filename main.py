@@ -3,7 +3,10 @@ import hmac
 import hashlib
 import time
 import threading
+import smtplib
 import requests
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 from flask import Flask, request, jsonify
 from dotenv import load_dotenv
 from datetime import datetime
@@ -17,10 +20,13 @@ WHATSAPP_TOKEN = os.environ.get("WHATSAPP_TOKEN", "")
 PHONE_NUMBER_ID = os.environ.get("PHONE_NUMBER_ID", "")
 PHONE_NUMBER_ID_2 = os.environ.get("PHONE_NUMBER_ID_2", "")
 APP_SECRET = os.environ.get("APP_SECRET", "")
-ASESOR_PHONE = os.environ.get("ASESOR_PHONE", "")
-ASESOR_PHONE_2 = os.environ.get("ASESOR_PHONE_2", "")
 BUSINESS_NAME = os.environ.get("BUSINESS_NAME", "Asesoría Laboral")
 BASE_URL = os.environ.get("BASE_URL", "")
+
+# Configuración email
+GMAIL_USER = os.environ.get("GMAIL_USER", "javier.martin.ruiz.gs@gmail.com")
+GMAIL_APP_PASSWORD = os.environ.get("GMAIL_APP_PASSWORD", "")
+ASESOR_EMAIL = os.environ.get("ASESOR_EMAIL", "rrss.nebulosadigital@gmail.com")
 
 TIMEOUT_MINUTES = 10
 
@@ -318,36 +324,60 @@ def send_whatsapp_image(to: str, image_filename: str, caption: str = "", phone_n
         print(f"Error sending image to {to}: {e}")
 
 
+def send_email(subject: str, body: str) -> None:
+    """Envía un email desde GMAIL_USER a ASESOR_EMAIL."""
+    if not GMAIL_APP_PASSWORD:
+        print("GMAIL_APP_PASSWORD no configurada — email no enviado")
+        return
+    try:
+        msg = MIMEMultipart("alternative")
+        msg["Subject"] = subject
+        msg["From"] = GMAIL_USER
+        msg["To"] = ASESOR_EMAIL
+        msg.attach(MIMEText(body, "plain", "utf-8"))
+        with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
+            server.login(GMAIL_USER, GMAIL_APP_PASSWORD)
+            server.sendmail(GMAIL_USER, ASESOR_EMAIL, msg.as_string())
+        print(f"Email enviado a {ASESOR_EMAIL}: {subject}")
+    except Exception as e:
+        print(f"Error enviando email: {e}")
+
+
 def notify_asesor(service_name: str, answers: list, contact_info: str, user_phone: str) -> None:
     answers_text = "\n".join([f"  • R{i + 1}: {a}" for i, a in enumerate(answers)])
-    msg = (
-        f"🔔 *NUEVO CLIENTE — {service_name}*\n\n"
-        f"📱 WhatsApp cliente: +{user_phone}\n"
-        f"👤 Datos de contacto: {contact_info}\n\n"
-        f"Respuestas del cuestionario:\n{answers_text}"
+    subject = f"[{BUSINESS_NAME}] NUEVO CLIENTE — {service_name}"
+    body = (
+        f"NUEVO CLIENTE — {service_name}\n"
+        f"{'=' * 50}\n\n"
+        f"WhatsApp cliente: +{user_phone}\n"
+        f"Datos de contacto: {contact_info}\n\n"
+        f"Respuestas del cuestionario:\n{answers_text}\n"
     )
-    send_whatsapp_message(ASESOR_PHONE, msg)
+    send_email(subject, body)
 
 
 def notify_asesor_simple(reason: str, info: str, user_phone: str) -> None:
-    msg = (
-        f"🔔 *{reason}*\n\n"
-        f"📱 WhatsApp cliente: +{user_phone}\n"
-        f"💬 {info}"
+    subject = f"[{BUSINESS_NAME}] {reason}"
+    body = (
+        f"{reason}\n"
+        f"{'=' * 50}\n\n"
+        f"WhatsApp cliente: +{user_phone}\n"
+        f"{info}\n"
     )
-    send_whatsapp_message(ASESOR_PHONE, msg)
+    send_email(subject, body)
 
 
 def notify_asesor_2(area: str, subopcion: str, contact_info: str, user_phone: str) -> None:
-    asesor = ASESOR_PHONE_2 or ASESOR_PHONE
-    msg = (
-        f"🔔 *NUEVA CONSULTA JURÍDICA*\n\n"
-        f"📱 WhatsApp cliente: +{user_phone}\n"
-        f"📂 Área: {area}\n"
-        f"📌 Subopción: {subopcion}\n"
-        f"👤 Datos de contacto: {contact_info}"
+    subject = f"[{BUSINESS_NAME}] NUEVA CONSULTA JURÍDICA — {area}"
+    body = (
+        f"NUEVA CONSULTA JURÍDICA\n"
+        f"{'=' * 50}\n\n"
+        f"WhatsApp cliente: +{user_phone}\n"
+        f"Área: {area}\n"
+        f"Subopción: {subopcion}\n"
+        f"Datos de contacto: {contact_info}\n"
     )
-    send_whatsapp_message(asesor, msg)
+    send_email(subject, body)
 
 
 # ── ESTADO ────────────────────────────────────────────────────────────
