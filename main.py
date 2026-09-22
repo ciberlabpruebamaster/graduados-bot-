@@ -41,6 +41,11 @@ FLOWS = {
             "¿Qué necesitas exactamente?\n\nA) Elaborar o revisar nóminas\nB) Redactar o revisar un contrato\nC) Calcular finiquito o liquidación\nD) Regularización de atrasos o diferencias salariales",
             "¿Con qué urgencia lo necesitas?\n\nA) Urgente (esta semana)\nB) Sin prisa (en 2-3 semanas)",
         ],
+        "options": [
+            {"a": "Empresa o autónomo con empleados", "b": "Trabajador por cuenta ajena"},
+            {"a": "Elaborar o revisar nóminas", "b": "Redactar o revisar un contrato", "c": "Calcular finiquito o liquidación", "d": "Regularización de atrasos o diferencias salariales"},
+            {"a": "Urgente (esta semana)", "b": "Sin prisa (en 2-3 semanas)"},
+        ],
         "closing": (
             "✅ Perfecto, con esto ya tengo lo que necesito.\n\n"
             "¿Me dices tu *nombre* y un *email o teléfono* para que el asesor "
@@ -55,6 +60,11 @@ FLOWS = {
             "¿Para cuándo lo necesitas?\n\nA) Urgente (hoy o mañana)\nB) Esta semana\nC) Sin prisa",
             "¿Tienes la documentación del trabajador o tuya lista?\n\nA) Sí, tengo todo\nB) No, necesito saber qué documentos hacen falta",
         ],
+        "options": [
+            {"a": "Alta de trabajador en empresa", "b": "Baja de trabajador en empresa", "c": "Alta como autónomo (RETA)", "d": "Baja como autónomo (RETA)", "e": "Variación de datos o jornada"},
+            {"a": "Urgente (hoy o mañana)", "b": "Esta semana", "c": "Sin prisa"},
+            {"a": "Sí, tengo todo", "b": "No, necesito saber qué documentos hacen falta"},
+        ],
         "closing": (
             "✅ Anotado. Dame tu *nombre* y un *email o teléfono* "
             "y lo gestionamos cuanto antes."
@@ -68,6 +78,11 @@ FLOWS = {
             "¿Eres...?\n\nA) Trabajador por cuenta ajena\nB) Autónomo/a",
             "¿Ya tienes alguna solicitud iniciada?\n\nA) No, quiero empezar desde cero\nB) Sí, tengo una en trámite y tengo dudas",
         ],
+        "options": [
+            {"a": "Desempleo (paro)", "b": "Incapacidad temporal (baja médica)", "c": "Jubilación o prejubilación", "d": "Maternidad / paternidad / excedencia", "e": "Otra (viudedad, orfandad, ingreso mínimo vital...)"},
+            {"a": "Trabajador por cuenta ajena", "b": "Autónomo/a"},
+            {"a": "No, quiero empezar desde cero", "b": "Sí, tengo una en trámite y tengo dudas"},
+        ],
         "closing": (
             "✅ Perfecto. Dame tu *nombre* y un *email o teléfono* "
             "y el asesor te llama para explicarte los pasos y los plazos."
@@ -80,6 +95,10 @@ FLOWS = {
             "¿Cuál es tu situación?\n\nA) He recibido una visita de inspección\nB) Me han llegado requerimientos o propuesta de sanción\nC) Quiero interponer una denuncia\nD) Consulta preventiva (quiero saber si cumplo la normativa)",
             "¿Hay algún plazo urgente que debas cumplir?\n\nA) Sí, tengo plazo en menos de 7 días\nB) No, es una consulta sin urgencia inmediata",
         ],
+        "options": [
+            {"a": "He recibido una visita de inspección", "b": "Me han llegado requerimientos o propuesta de sanción", "c": "Quiero interponer una denuncia", "d": "Consulta preventiva (quiero saber si cumplo la normativa)"},
+            {"a": "Sí, tengo plazo en menos de 7 días", "b": "No, es una consulta sin urgencia inmediata"},
+        ],
         "closing": (
             "✅ Recibido. Dame tu *nombre* y un *email o teléfono* "
             "y el asesor se pone en contacto contigo a la mayor brevedad."
@@ -91,6 +110,10 @@ FLOWS = {
         "questions": [
             "¿Sobre qué tema es tu consulta?\n\nA) Despido o extinción de contrato\nB) Modificación de condiciones de trabajo\nC) Convenio colectivo aplicable\nD) Reclamación de salarios\nE) Otra consulta laboral",
             "¿Eres...?\n\nA) Empresa o empleador\nB) Trabajador/a",
+        ],
+        "options": [
+            {"a": "Despido o extinción de contrato", "b": "Modificación de condiciones de trabajo", "c": "Convenio colectivo aplicable", "d": "Reclamación de salarios", "e": "Otra consulta laboral"},
+            {"a": "Empresa o empleador", "b": "Trabajador/a"},
         ],
         "closing": (
             "✅ Anotado. Dame tu *nombre* y un *email o teléfono* "
@@ -118,6 +141,7 @@ FLOWS2 = {
     "1": {
         "name": "Asesoramiento Fiscal",
         "image": "fiscal.png",
+        "pdf": None,  # No se subió PDF fiscal — añadir cuando esté disponible
         "options": (
             "A) Planificación Societaria\n"
             "B) IRPF y Renta\n"
@@ -129,6 +153,7 @@ FLOWS2 = {
     "2": {
         "name": "Asesoramiento Laboral",
         "image": "laboral_ases.png",
+        "pdf": "asesoramiento_laboral_v3.pdf",
         "options": (
             "A) Nóminas y Contratos\n"
             "B) Seguridad Social\n"
@@ -140,6 +165,7 @@ FLOWS2 = {
     "3": {
         "name": "Derecho de Circulación",
         "image": "circulacion.png",
+        "pdf": "derecho_circulacion_v3.pdf",
         "options": (
             "A) Accidentes de Tráfico\n"
             "B) Reclamaciones\n"
@@ -151,6 +177,7 @@ FLOWS2 = {
     "4": {
         "name": "Derecho Civil",
         "image": "civil.png",
+        "pdf": "derecho_civil_v3.pdf",
         "options": (
             "A) Procesos Civiles\n"
             "B) Arrendamientos\n"
@@ -162,6 +189,7 @@ FLOWS2 = {
     "5": {
         "name": "Derecho Deportivo",
         "image": "deportivo.png",
+        "pdf": "derecho_deportivo_v3.pdf",
         "options": (
             "A) Laboral Deportivo\n"
             "B) Fiscal Deportivo\n"
@@ -173,6 +201,7 @@ FLOWS2 = {
     "6": {
         "name": "Derecho de Extranjería",
         "image": "extranjeria.png",
+        "pdf": "derecho_extranjeria_v3.pdf",
         "options": (
             "A) Residencia y NIE\n"
             "B) Arraigo\n"
@@ -184,6 +213,7 @@ FLOWS2 = {
     "7": {
         "name": "Derecho Laboral",
         "image": "laboral.png",
+        "pdf": "derecho_laboral_v3.pdf",
         "options": (
             "A) Contratación y Despidos\n"
             "B) Jurisdicción Social\n"
@@ -195,6 +225,7 @@ FLOWS2 = {
     "8": {
         "name": "Derecho Mercantil",
         "image": "mercantil.png",
+        "pdf": "derecho_mercantil_v3.pdf",
         "options": (
             "A) Sociedades\n"
             "B) Fusiones y Adquisiciones\n"
@@ -206,6 +237,7 @@ FLOWS2 = {
     "9": {
         "name": "Derecho Urbanismo",
         "image": "urbanismo.png",
+        "pdf": "derecho_urbanismo_v3.pdf",
         "options": (
             "A) Planeamiento Urbanístico\n"
             "B) Expropiaciones\n"
@@ -319,6 +351,27 @@ def send_whatsapp_image(to: str, image_filename: str, caption: str = "", phone_n
         response.raise_for_status()
     except Exception as e:
         print(f"Error sending image to {to}: {e}")
+
+
+def send_whatsapp_document(to: str, pdf_filename: str, caption: str = "", phone_number_id: str = None) -> None:
+    pid = phone_number_id or PHONE_NUMBER_ID_2
+    url = f"https://graph.facebook.com/v20.0/{pid}/messages"
+    doc_url = f"{BASE_URL}/static/servicios/{pdf_filename}"
+    headers = {
+        "Authorization": f"Bearer {WHATSAPP_TOKEN}",
+        "Content-Type": "application/json",
+    }
+    payload = {
+        "messaging_product": "whatsapp",
+        "to": to,
+        "type": "document",
+        "document": {"link": doc_url, "caption": caption, "filename": pdf_filename},
+    }
+    try:
+        response = requests.post(url, headers=headers, json=payload, timeout=10)
+        response.raise_for_status()
+    except Exception as e:
+        print(f"Error sending document to {to}: {e}")
 
 
 def _send_email_thread(subject: str, body: str) -> None:
@@ -486,7 +539,11 @@ def handle_message(user_id: str, text: str) -> None:
 
     elif step == "flow_q":
         flow = FLOWS[state["service_key"]]
-        state["answers"].append(text_clean)
+        # Resolver letra a texto completo si existe mapeo
+        q_opts = flow.get("options", [])
+        opt_map = q_opts[state["q_index"]] if state["q_index"] < len(q_opts) else {}
+        resolved = opt_map.get(text_clean.lower(), text_clean)
+        state["answers"].append(resolved)
         next_idx = state["q_index"] + 1
 
         if next_idx < len(flow["questions"]):
@@ -560,6 +617,13 @@ def handle_message_2(user_id: str, text: str) -> None:
             state["step"] = "flow2_sub"
             state["area_key"] = key
             send_whatsapp_image(user_id, flow["image"], phone_number_id=PHONE_NUMBER_ID_2)
+            if flow.get("pdf"):
+                send_whatsapp_document(
+                    user_id,
+                    flow["pdf"],
+                    caption=f"📄 Infografía {flow['name']}",
+                    phone_number_id=PHONE_NUMBER_ID_2,
+                )
             send_whatsapp_message(
                 user_id,
                 f"Estas son las áreas de *{flow['name']}* en las que podemos ayudarte:\n\n"
