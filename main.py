@@ -749,15 +749,6 @@ def receive_message():
                 send_whatsapp_message(from_number, WELCOME_MESSAGE)
                 return jsonify({"status": "ok"}), 200
 
-            state = user_state[from_number]
-            if (
-                state["step"] == "menu"
-                and not is_menu_keyword(user_text)
-                and not is_business_hours()
-            ):
-                send_whatsapp_message(from_number, OUT_OF_HOURS_MESSAGE)
-                return jsonify({"status": "ok"}), 200
-
             handle_message(from_number, user_text)
 
     except (KeyError, IndexError) as e:
