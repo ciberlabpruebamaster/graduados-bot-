@@ -628,6 +628,8 @@ def handle_message(user_id: str, text: str) -> None:
             "🗂️ Te dejamos información ampliada del área que has solicitado. Gracias",
         )
         send_whatsapp_image(user_id, flow["image"], caption=flow["name"])
+        import time as _time
+        _time.sleep(1)
         send_whatsapp_message(
             user_id,
             "Si necesitas algo más escribe *MENU*.",
