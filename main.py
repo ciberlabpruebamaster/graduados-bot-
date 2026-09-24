@@ -593,13 +593,6 @@ def handle_message(user_id: str, text: str) -> None:
             flow = FLOWS2[key]
             state["step"] = "flow2_sub"
             state["area_key"] = key
-            send_whatsapp_image(user_id, flow["image"])
-            if flow.get("pdf"):
-                send_whatsapp_document(
-                    user_id,
-                    flow["pdf"],
-                    caption=f"📄 Infografía {flow['name']}",
-                )
             send_whatsapp_message(
                 user_id,
                 f"Estas son las áreas de *{flow['name']}* en las que podemos ayudarte:\n\n"
@@ -626,7 +619,17 @@ def handle_message(user_id: str, text: str) -> None:
         send_whatsapp_message(
             user_id,
             "✅ ¡Perfecto! Hemos recibido tu consulta.\n\n"
-            "Nuestro asesor se pondrá en contacto contigo en menos de 24 horas. 😊\n\n"
+            "Nuestro asesor se pondrá en contacto contigo en menos de 24 horas. 😊",
+        )
+        # Enviar imágenes de todas las áreas como presentación de servicios
+        send_whatsapp_message(
+            user_id,
+            "🗂️ Te dejamos algunas de las áreas en las que trabajamos:",
+        )
+        for area in FLOWS2.values():
+            send_whatsapp_image(user_id, area["image"], caption=area["name"])
+        send_whatsapp_message(
+            user_id,
             "Si necesitas algo más escribe *MENU*.",
         )
         init_state(user_id)
