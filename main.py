@@ -12,7 +12,7 @@ load_dotenv()
 
 app = Flask(__name__)
 
-VERIFY_TOKEN = os.environ.get("VERIFY_TOKEN", "")
+VERIFY_TOKEN = os.environ.get("VERIFY_TOKEN", "") 
 WHATSAPP_TOKEN = os.environ.get("WHATSAPP_TOKEN", "")
 PHONE_NUMBER_ID = os.environ.get("PHONE_NUMBER_ID", "")
 PHONE_NUMBER_ID_2 = os.environ.get("PHONE_NUMBER_ID_2", "")
