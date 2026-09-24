@@ -12,12 +12,11 @@ load_dotenv()
 
 app = Flask(__name__)
 
-VERIFY_TOKEN = os.environ.get("VERIFY_TOKEN", "") 
+VERIFY_TOKEN = os.environ.get("VERIFY_TOKEN", "")
 WHATSAPP_TOKEN = os.environ.get("WHATSAPP_TOKEN", "")
 PHONE_NUMBER_ID = os.environ.get("PHONE_NUMBER_ID", "")
-PHONE_NUMBER_ID_2 = os.environ.get("PHONE_NUMBER_ID_2", "")
 APP_SECRET = os.environ.get("APP_SECRET", "")
-BUSINESS_NAME = os.environ.get("BUSINESS_NAME", "Asesoría Laboral")
+BUSINESS_NAME = os.environ.get("BUSINESS_NAME", "Asesoría Graduados")
 BASE_URL = os.environ.get("BASE_URL", "")
 
 # Configuración email (Resend)
@@ -28,9 +27,8 @@ ASESOR_EMAIL = os.environ.get("ASESOR_EMAIL", "rrss.nebulosadigital@gmail.com")
 TIMEOUT_MINUTES = 10
 
 user_state: dict[str, dict] = {}
-user_state_2: dict[str, dict] = {}
 
-# ── BOT 1: FLUJOS LABORALES ───────────────────────────────────────────
+# ── FLUJOS LABORALES ──────────────────────────────────────────────────
 
 FLOWS = {
     "1": {
@@ -122,26 +120,13 @@ FLOWS = {
     },
 }
 
-WELCOME_MESSAGE = (
-    f"👋 ¡Hola! Soy el asistente de *{BUSINESS_NAME}*.\n\n"
-    "Te ayudo con todos tus trámites laborales y de Seguridad Social de forma rápida y sencilla.\n\n"
-    "¿En qué puedo ayudarte hoy?\n\n"
-    "1️⃣ Nóminas y Contratos\n"
-    "2️⃣ Altas y Bajas en Seguridad Social\n"
-    "3️⃣ Prestaciones y Subsidios\n"
-    "4️⃣ Inspección de Trabajo\n"
-    "5️⃣ Asesoría Laboral General\n"
-    "6️⃣ Hablar con el asesor\n"
-    "7️⃣ Solicitar una llamada"
-)
-
-# ── BOT 2: SERVICIOS JURÍDICOS ────────────────────────────────────────
+# ── FLUJOS JURÍDICOS ──────────────────────────────────────────────────
 
 FLOWS2 = {
     "1": {
         "name": "Asesoramiento Fiscal",
         "image": "fiscal.png",
-        "pdf": None,  # No se subió PDF fiscal — añadir cuando esté disponible
+        "pdf": None,
         "options": (
             "A) Planificación Societaria\n"
             "B) IRPF y Renta\n"
@@ -248,9 +233,28 @@ FLOWS2 = {
     },
 }
 
-WELCOME_MESSAGE_2 = (
-    f"👋 ¡Hola! Soy el asistente jurídico de *{BUSINESS_NAME}*.\n\n"
-    "¿En qué área podemos ayudarte?\n\n"
+# ── MENSAJES ──────────────────────────────────────────────────────────
+
+WELCOME_MESSAGE = (
+    f"👋 ¡Hola! Soy el asistente de *{BUSINESS_NAME}*.\n\n"
+    "¿En qué área necesitas ayuda?\n\n"
+    "1️⃣ Asesoría Laboral y Seguridad Social\n"
+    "2️⃣ Servicios Jurídicos"
+)
+
+MENU_LABORAL = (
+    "¿En qué podemos ayudarte?\n\n"
+    "1️⃣ Nóminas y Contratos\n"
+    "2️⃣ Altas y Bajas en Seguridad Social\n"
+    "3️⃣ Prestaciones y Subsidios\n"
+    "4️⃣ Inspección de Trabajo\n"
+    "5️⃣ Asesoría Laboral General\n"
+    "6️⃣ Hablar con el asesor\n"
+    "7️⃣ Solicitar una llamada"
+)
+
+MENU_JURIDICO = (
+    "¿En qué área jurídica podemos ayudarte?\n\n"
     "1️⃣ Asesoramiento Fiscal\n"
     "2️⃣ Asesoramiento Laboral\n"
     "3️⃣ Derecho de Circulación\n"
@@ -262,21 +266,19 @@ WELCOME_MESSAGE_2 = (
     "9️⃣ Derecho Urbanismo"
 )
 
-# ── MENSAJES COMUNES ──────────────────────────────────────────────────
-
-OUT_OF_HOURS_MESSAGE = (
-    "⏰ En este momento estamos fuera de horario. "
-    "Atendemos de *lunes a viernes de 9:00 a 18:00h*.\n\n"
-    "Tu consulta ha quedado registrada. El asesor te responderá en cuanto abramos.\n\n"
-    "Si lo prefieres, déjanos tu nombre y teléfono y te llamamos a primera hora. 📞"
-)
-
 TIMEOUT_REMINDER = (
     "¿Sigues ahí? 😊 Puedes continuar cuando quieras "
     "o escribe *MENU* para volver al inicio."
 )
 
-INVALID_OPTION = (
+INVALID_OPTION_MAIN = (
+    "No reconozco esa opción. Por favor elige:\n\n"
+    "1️⃣ Asesoría Laboral y Seguridad Social\n"
+    "2️⃣ Servicios Jurídicos\n\n"
+    "O escribe *MENU* para volver aquí."
+)
+
+INVALID_OPTION_LABORAL = (
     "No reconozco esa opción. Por favor elige entre:\n\n"
     "1️⃣ Nóminas y Contratos\n"
     "2️⃣ Altas y Bajas en Seguridad Social\n"
@@ -285,10 +287,10 @@ INVALID_OPTION = (
     "5️⃣ Asesoría Laboral General\n"
     "6️⃣ Hablar con el asesor\n"
     "7️⃣ Solicitar una llamada\n\n"
-    "O escribe *MENU* en cualquier momento para volver aquí."
+    "O escribe *MENU* para volver al inicio."
 )
 
-INVALID_OPTION_2 = (
+INVALID_OPTION_JURIDICO = (
     "No reconozco esa opción. Por favor elige un número del 1 al 9:\n\n"
     "1️⃣ Asesoramiento Fiscal\n"
     "2️⃣ Asesoramiento Laboral\n"
@@ -299,22 +301,14 @@ INVALID_OPTION_2 = (
     "7️⃣ Derecho Laboral\n"
     "8️⃣ Derecho Mercantil\n"
     "9️⃣ Derecho Urbanismo\n\n"
-    "O escribe *MENU* para volver aquí."
+    "O escribe *MENU* para volver al inicio."
 )
 
 
 # ── UTILIDADES ────────────────────────────────────────────────────────
 
-def is_business_hours() -> bool:
-    now = datetime.now()
-    if now.weekday() >= 5:
-        return False
-    return 9 <= now.hour < 18
-
-
-def send_whatsapp_message(to: str, text: str, phone_number_id: str = None) -> None:
-    pid = phone_number_id or PHONE_NUMBER_ID
-    url = f"https://graph.facebook.com/v20.0/{pid}/messages"
+def send_whatsapp_message(to: str, text: str) -> None:
+    url = f"https://graph.facebook.com/v20.0/{PHONE_NUMBER_ID}/messages"
     headers = {
         "Authorization": f"Bearer {WHATSAPP_TOKEN}",
         "Content-Type": "application/json",
@@ -332,9 +326,8 @@ def send_whatsapp_message(to: str, text: str, phone_number_id: str = None) -> No
         print(f"Error sending message to {to}: {e}")
 
 
-def send_whatsapp_image(to: str, image_filename: str, caption: str = "", phone_number_id: str = None) -> None:
-    pid = phone_number_id or PHONE_NUMBER_ID_2
-    url = f"https://graph.facebook.com/v20.0/{pid}/messages"
+def send_whatsapp_image(to: str, image_filename: str, caption: str = "") -> None:
+    url = f"https://graph.facebook.com/v20.0/{PHONE_NUMBER_ID}/messages"
     image_url = f"{BASE_URL}/static/servicios/{image_filename}"
     headers = {
         "Authorization": f"Bearer {WHATSAPP_TOKEN}",
@@ -353,9 +346,8 @@ def send_whatsapp_image(to: str, image_filename: str, caption: str = "", phone_n
         print(f"Error sending image to {to}: {e}")
 
 
-def send_whatsapp_document(to: str, pdf_filename: str, caption: str = "", phone_number_id: str = None) -> None:
-    pid = phone_number_id or PHONE_NUMBER_ID_2
-    url = f"https://graph.facebook.com/v20.0/{pid}/messages"
+def send_whatsapp_document(to: str, pdf_filename: str, caption: str = "") -> None:
+    url = f"https://graph.facebook.com/v20.0/{PHONE_NUMBER_ID}/messages"
     doc_url = f"{BASE_URL}/static/servicios/{pdf_filename}"
     headers = {
         "Authorization": f"Bearer {WHATSAPP_TOKEN}",
@@ -375,7 +367,6 @@ def send_whatsapp_document(to: str, pdf_filename: str, caption: str = "", phone_
 
 
 def _send_email_thread(subject: str, body: str) -> None:
-    """Envía un email vía Resend API (HTTPS) en hilo separado."""
     if not RESEND_API_KEY:
         print("RESEND_API_KEY no configurada — email no enviado")
         return
@@ -394,7 +385,7 @@ def _send_email_thread(subject: str, body: str) -> None:
             },
             timeout=15,
         )
-        if response.status_code == 200 or response.status_code == 201:
+        if response.status_code in (200, 201):
             print(f"Email enviado a {ASESOR_EMAIL}: {subject}")
         else:
             print(f"Error Resend {response.status_code}: {response.text}")
@@ -430,7 +421,7 @@ def notify_asesor_simple(reason: str, info: str, user_phone: str) -> None:
     send_email(subject, body)
 
 
-def notify_asesor_2(area: str, subopcion: str, contact_info: str, user_phone: str) -> None:
+def notify_asesor_juridico(area: str, subopcion: str, contact_info: str, user_phone: str) -> None:
     subject = f"[{BUSINESS_NAME}] NUEVA CONSULTA JURÍDICA — {area}"
     body = (
         f"NUEVA CONSULTA JURÍDICA\n"
@@ -447,10 +438,13 @@ def notify_asesor_2(area: str, subopcion: str, contact_info: str, user_phone: st
 
 def init_state(user_id: str) -> dict:
     state: dict = {
-        "step": "menu",
+        "step": "main_menu",  # main_menu → laboral_menu / juridico_menu → ...
+        "bot": None,          # "laboral" o "juridico"
         "service_key": None,
         "q_index": 0,
         "answers": [],
+        "area_key": None,
+        "subopcion": None,
         "last_activity": datetime.now(),
         "timeout_sent": False,
     }
@@ -464,24 +458,6 @@ def get_state(user_id: str) -> dict:
     return user_state[user_id]
 
 
-def init_state_2(user_id: str) -> dict:
-    state: dict = {
-        "step": "menu2",
-        "area_key": None,
-        "subopcion": None,
-        "last_activity": datetime.now(),
-        "timeout_sent": False,
-    }
-    user_state_2[user_id] = state
-    return state
-
-
-def get_state_2(user_id: str) -> dict:
-    if user_id not in user_state_2:
-        return init_state_2(user_id)
-    return user_state_2[user_id]
-
-
 def is_menu_keyword(text: str) -> bool:
     return text.strip().lower() in {
         "menu", "menú", "inicio", "start",
@@ -490,7 +466,7 @@ def is_menu_keyword(text: str) -> bool:
     }
 
 
-# ── LÓGICA BOT 1 ──────────────────────────────────────────────────────
+# ── LÓGICA UNIFICADA ──────────────────────────────────────────────────
 
 def handle_message(user_id: str, text: str) -> None:
     text_clean = text.strip()
@@ -498,6 +474,7 @@ def handle_message(user_id: str, text: str) -> None:
     state["last_activity"] = datetime.now()
     state["timeout_sent"] = False
 
+    # Cualquier keyword de menú vuelve al inicio
     if is_menu_keyword(text_clean):
         init_state(user_id)
         send_whatsapp_message(user_id, WELCOME_MESSAGE)
@@ -505,7 +482,23 @@ def handle_message(user_id: str, text: str) -> None:
 
     step = state["step"]
 
-    if step == "menu":
+    # ── MENÚ PRINCIPAL: elegir Laboral o Jurídico ─────────────────────
+    if step == "main_menu":
+        if text_clean == "1":
+            state["bot"] = "laboral"
+            state["step"] = "laboral_menu"
+            send_whatsapp_message(user_id, MENU_LABORAL)
+
+        elif text_clean == "2":
+            state["bot"] = "juridico"
+            state["step"] = "juridico_menu"
+            send_whatsapp_message(user_id, MENU_JURIDICO)
+
+        else:
+            send_whatsapp_message(user_id, INVALID_OPTION_MAIN)
+
+    # ── RAMA LABORAL ──────────────────────────────────────────────────
+    elif step == "laboral_menu":
         if text_clean in ("1", "2", "3", "4", "5"):
             flow = FLOWS[text_clean]
             state["step"] = "flow_q"
@@ -535,11 +528,10 @@ def handle_message(user_id: str, text: str) -> None:
             )
 
         else:
-            send_whatsapp_message(user_id, INVALID_OPTION)
+            send_whatsapp_message(user_id, INVALID_OPTION_LABORAL)
 
     elif step == "flow_q":
         flow = FLOWS[state["service_key"]]
-        # Resolver letra a texto completo si existe mapeo
         q_opts = flow.get("options", [])
         opt_map = q_opts[state["q_index"]] if state["q_index"] < len(q_opts) else {}
         resolved = opt_map.get(text_clean.lower(), text_clean)
@@ -594,69 +586,50 @@ def handle_message(user_id: str, text: str) -> None:
         )
         init_state(user_id)
 
-
-# ── LÓGICA BOT 2 ──────────────────────────────────────────────────────
-
-def handle_message_2(user_id: str, text: str) -> None:
-    text_clean = text.strip().upper()
-    state = get_state_2(user_id)
-    state["last_activity"] = datetime.now()
-    state["timeout_sent"] = False
-
-    if is_menu_keyword(text_clean.lower()):
-        init_state_2(user_id)
-        send_whatsapp_message(user_id, WELCOME_MESSAGE_2, PHONE_NUMBER_ID_2)
-        return
-
-    step = state["step"]
-
-    if step == "menu2":
+    # ── RAMA JURÍDICA ─────────────────────────────────────────────────
+    elif step == "juridico_menu":
         key = text_clean
         if key in FLOWS2:
             flow = FLOWS2[key]
             state["step"] = "flow2_sub"
             state["area_key"] = key
-            send_whatsapp_image(user_id, flow["image"], phone_number_id=PHONE_NUMBER_ID_2)
+            send_whatsapp_image(user_id, flow["image"])
             if flow.get("pdf"):
                 send_whatsapp_document(
                     user_id,
                     flow["pdf"],
                     caption=f"📄 Infografía {flow['name']}",
-                    phone_number_id=PHONE_NUMBER_ID_2,
                 )
             send_whatsapp_message(
                 user_id,
                 f"Estas son las áreas de *{flow['name']}* en las que podemos ayudarte:\n\n"
                 f"{flow['options']}\n\n"
                 "¿Cuál es tu caso?",
-                PHONE_NUMBER_ID_2,
             )
         else:
-            send_whatsapp_message(user_id, INVALID_OPTION_2, PHONE_NUMBER_ID_2)
+            send_whatsapp_message(user_id, INVALID_OPTION_JURIDICO)
 
     elif step == "flow2_sub":
         flow = FLOWS2[state["area_key"]]
-        state["subopcion"] = f"{text_clean} — {flow['name']}"
+        state["subopcion"] = f"{text_clean.upper()} — {flow['name']}"
         state["step"] = "flow2_contact"
         send_whatsapp_message(
             user_id,
             "✅ Entendido.\n\n"
             "Para que nuestro asesor se ponga en contacto contigo, "
             "dinos tu *nombre completo* y un *teléfono o email*.",
-            PHONE_NUMBER_ID_2,
         )
 
     elif step == "flow2_contact":
         flow = FLOWS2[state["area_key"]]
-        notify_asesor_2(flow["name"], state["subopcion"], text_clean, user_id)
+        notify_asesor_juridico(flow["name"], state["subopcion"], text_clean, user_id)
         send_whatsapp_message(
             user_id,
             "✅ ¡Perfecto! Hemos recibido tu consulta.\n\n"
             "Nuestro asesor se pondrá en contacto contigo en menos de 24 horas. 😊\n\n"
             "Si necesitas algo más escribe *MENU*.",
-            PHONE_NUMBER_ID_2,
         )
-        init_state_2(user_id)
+        init_state(user_id)
 
 
 # ── TIMEOUT ───────────────────────────────────────────────────────────
@@ -666,18 +639,11 @@ def timeout_checker() -> None:
         time.sleep(60)
         now = datetime.now()
         for user_id, state in list(user_state.items()):
-            if state["step"] == "menu" or state.get("timeout_sent"):
+            if state["step"] == "main_menu" or state.get("timeout_sent"):
                 continue
             elapsed = (now - state["last_activity"]).total_seconds() / 60
             if elapsed >= TIMEOUT_MINUTES:
                 send_whatsapp_message(user_id, TIMEOUT_REMINDER)
-                state["timeout_sent"] = True
-        for user_id, state in list(user_state_2.items()):
-            if state["step"] == "menu2" or state.get("timeout_sent"):
-                continue
-            elapsed = (now - state["last_activity"]).total_seconds() / 60
-            if elapsed >= TIMEOUT_MINUTES:
-                send_whatsapp_message(user_id, TIMEOUT_REMINDER, PHONE_NUMBER_ID_2)
                 state["timeout_sent"] = True
 
 
@@ -723,33 +689,22 @@ def receive_message():
         message = value["messages"][0]
         from_number = message["from"]
         message_type = message.get("type")
-        incoming_phone_id = value.get("metadata", {}).get("phone_number_id", "")
 
         if message_type != "text":
-            pid = PHONE_NUMBER_ID_2 if incoming_phone_id == PHONE_NUMBER_ID_2 else PHONE_NUMBER_ID
             send_whatsapp_message(
                 from_number,
                 "Solo proceso texto por ahora 😊 Escribe *MENU* para ver las opciones.",
-                pid,
             )
             return jsonify({"status": "ok"}), 200
 
         user_text = message["text"]["body"]
 
-        # Enrutar según número receptor
-        if incoming_phone_id == PHONE_NUMBER_ID_2:
-            if from_number not in user_state_2:
-                init_state_2(from_number)
-                send_whatsapp_message(from_number, WELCOME_MESSAGE_2, PHONE_NUMBER_ID_2)
-                return jsonify({"status": "ok"}), 200
-            handle_message_2(from_number, user_text)
-        else:
-            if from_number not in user_state:
-                init_state(from_number)
-                send_whatsapp_message(from_number, WELCOME_MESSAGE)
-                return jsonify({"status": "ok"}), 200
+        if from_number not in user_state:
+            init_state(from_number)
+            send_whatsapp_message(from_number, WELCOME_MESSAGE)
+            return jsonify({"status": "ok"}), 200
 
-            handle_message(from_number, user_text)
+        handle_message(from_number, user_text)
 
     except (KeyError, IndexError) as e:
         print(f"Webhook parse error: {e}")
@@ -759,7 +714,7 @@ def receive_message():
 
 @app.route("/", methods=["GET"])
 def health_check():
-    return jsonify({"status": "running", "bot": f"{BUSINESS_NAME} WhatsApp Bot v1"}), 200
+    return jsonify({"status": "running", "bot": f"{BUSINESS_NAME} WhatsApp Bot v2"}), 200
 
 
 if __name__ == "__main__":
