@@ -621,13 +621,13 @@ def handle_message(user_id: str, text: str) -> None:
             "✅ ¡Perfecto! Hemos recibido tu consulta.\n\n"
             "Nuestro asesor se pondrá en contacto contigo en menos de 24 horas. 😊",
         )
-        # Enviar imágenes de todas las áreas como presentación de servicios
+        # Enviar solo la imagen del área solicitada
         send_whatsapp_message(
             user_id,
-            "🗂️ Te dejamos algunas de las áreas en las que trabajamos:",
+            "―――――――――――――――――――\n"
+            "🗂️ Te dejamos información ampliada del área que has solicitado. Gracias",
         )
-        for area in FLOWS2.values():
-            send_whatsapp_image(user_id, area["image"], caption=area["name"])
+        send_whatsapp_image(user_id, flow["image"], caption=flow["name"])
         send_whatsapp_message(
             user_id,
             "Si necesitas algo más escribe *MENU*.",
